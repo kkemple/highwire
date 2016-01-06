@@ -1,0 +1,33 @@
+{
+  "name": "highwire",
+  "version": "1.0.0",
+  "description": "A high level HTTP client",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkemple/highwire.git"
+  },
+  "keywords": [
+    "http",
+    "bluebird",
+    "promises",
+    "requests",
+    "network",
+    "api",
+    "client",
+    "request",
+    "superagent",
+    "highwire",
+    "network",
+    "requests"
+  ],
+  "author": "kurtiskemple@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kkemple/highwire/issues"
+  },
+  "homepage": "https://github.com/kkemple/highwire#readme"
+}
