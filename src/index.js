@@ -1,9 +1,10 @@
-import request from 'superagent'
+import assign from 'lodash.assign'
 import Promise from 'bluebird'
+import request from 'superagent'
 
 Promise.config({ cancellation: true })
 
-export function get(url, {
+function get(url, {
   headers: headers = {},
   query: query = {},
   progress: progress = () => {},
@@ -15,14 +16,14 @@ export function get(url, {
       .on('progress', progress)
       .end((err, response) => {
         if (err) rej(err)
-        else res(response.body)
+        else res(response)
       })
 
     onCancel(req.abort)
   })
 }
 
-export function post(url, data = {}, {
+function post(url, data = {}, {
   headers: headers = {},
   query: query = {},
   progress: progress = () => {},
@@ -35,14 +36,14 @@ export function post(url, data = {}, {
       .on('progress', progress)
       .end((err, response) => {
         if (err) rej(err)
-        else res(response.body)
+        else res(response)
       })
 
     onCancel(req.abort)
   })
 }
 
-export function put(url, data = {}, {
+function put(url, data = {}, {
     headers: headers = {},
     query: query = {},
     progress: progress = () => {},
@@ -55,14 +56,14 @@ export function put(url, data = {}, {
       .on('progress', progress)
       .end((err, response) => {
         if (err) rej(err)
-        else res(response.body)
+        else res(response)
       })
 
     onCancel(req.abort)
   })
 }
 
-export function patch(url, data = {}, {
+function patch(url, data = {}, {
   headers: headers = {},
   query: query = {},
   progress: progress = () => {},
@@ -75,14 +76,14 @@ export function patch(url, data = {}, {
       .on('progress', progress)
       .end((err, response) => {
         if (err) rej(err)
-        else res(response.body)
+        else res(response)
       })
 
     onCancel(req.abort)
   })
 }
 
-export function del(url, {
+function del(url, {
   headers: headers = {},
   query: query = {},
   progress: progress = () => {},
@@ -94,9 +95,39 @@ export function del(url, {
       .on('progress', progress)
       .end((err, response) => {
         if (err) rej(err)
-        else res(response.body)
+        else res(response)
       })
 
     onCancel(req.abort)
   })
 }
+
+function multipart(url, {
+  attachments = [],
+  fields = [],
+} = {}, {
+  headers: headers = {},
+  query: query = {},
+  progress: progress = () => {},
+} = {}) {
+  const req = request.post(url)
+    .set(headers)
+    .query(query)
+    .on('progress', progress)
+
+  attachments.forEach(attachment => req.attach(...attachment))
+  fields.forEach(field => req.field(...field))
+
+  req.end((err, response) => {
+    if (err) rej(err)
+    else res(response)
+  })
+
+  onCancel(req.abort)
+}
+
+function createHighwire(opts = {}) {
+  return assign({}, opts, { get, post, patch, put, del, multipart })
+}
+
+export default createHighwire
