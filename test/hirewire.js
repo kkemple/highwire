@@ -1,7 +1,8 @@
-import test from 'tape'
 import nock from 'nock'
+import path from 'path'
+import test from 'tape'
 
-import highwireFactory from '../src/index'
+import highwireFactory from '../lib/index'
 
 const { get, post, put, patch, del, multipart } = highwireFactory()
 
@@ -135,4 +136,32 @@ test('del()', (nest) => {
   })
 })
 
-test('multipart()')
+test('multipart()', (nest) => {
+  nest.test('with valid response', (t) => {
+    t.plan(1)
+
+    nock('http://test.url')
+      .post('/resource')
+      .reply(200, 'okay')
+
+    multipart('http://test.url/resource', {
+      attachments: [['test', `${path.resolve(__dirname, './fixtures/example.txt')}`]],
+    }, {
+      progress: function(event) { console.log(event) },
+    })
+      .then(t.pass)
+      .catch(t.fail)
+  })
+
+  nest.test('with an invalid response', (t) => {
+    t.plan(1)
+
+    nock('http://test.url')
+      .post('/resource', { test: 'test' })
+      .replyWithError('not okay')
+
+    post('http://test.url/resource', { test: 'test' })
+      .then(t.fail)
+      .catch(t.pass)
+  })
+})
