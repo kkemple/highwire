@@ -43,7 +43,7 @@
     "eslint-config-airbnb": "^3.0.1",
     "nock": "^4.0.0",
     "tape": "^4.4.0",
-    "webpack": "^1.12.10"
+    "webpack": "^1.12.11"
   },
   "dependencies": {
     "babel-cli": "^6.4.0",
