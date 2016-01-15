@@ -10,7 +10,7 @@ import React from 'react'
 import highwireFactory from 'highwire'
 
 const { get } = highwireFactory()
-const headers = { authorization: 'token <AUTH_TOKEN>' }
+const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
 const retries = 5
 
 export default React.createClass({
@@ -18,6 +18,7 @@ export default React.createClass({
     // fetch some repos
     this.reposRequest = get('https://api.github.com/repos', { headers, retries })
     this.reposRequest
+      .then((response) => JSON.parse(response.body))
       .then((repos) => this.setState({ repos }))
       .catch((err) => this.setState({ err }))
   },
@@ -59,9 +60,12 @@ import highwireFactory from 'highwire'
 const { get } = highwireFactory()
 const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
 const retries = 5
-const throttledGetRepos = throttle(function getRepos() {
-  return get('https://api.github.com/repos', { headers, retries })
-}, 1000 * 10)
+const getRepos = () => get('https://api.github.com/repos', { headers, retries })
+
+const REPOS_REQUEST = 'REPOS_REQUEST'
+const REPOS_REQUEST_SUCCESS = 'REPOS_REQUEST_SUCCESS'
+const REPOS_REQUEST_ERROR = 'REPOST_REQUEST_ERROR'
+const REPOS_REQUEST_CANCELLED = 'REPOST_REQUEST_CANCELLED'
 
 const defaultState = {
   isComplete: false,
@@ -73,24 +77,21 @@ const defaultState = {
 
 let currentRequest
 
-export const REPOS_REQUEST = 'REPOS_REQUEST'
-export const REPOS_REQUEST_SUCCESS = 'REPOS_REQUEST_SUCCESS'
-export const REPOST_REQUEST_ERROR = 'REPOST_REQUEST_ERROR'
-export const REPOST_REQUEST_ERROR = 'REPOST_REQUEST_ERROR'
-export const REPOST_REQUEST_CANCELLED = 'REPOST_REQUEST_CANCELLED'
+export const fetchRepos = throttle(function fetchRepos() {
+  return (dispatch) => {
+    dispatch({ type: REPOS_REQUEST })
 
-export const fetchRepos = () => (dispatch) => {
-  dispatch({ type: REPOS_REQUEST })
-
-  currentRequest = throttledGetRepos()
-    .then((response) => dispatch({ type: REPOS_REQUEST_SUCCESS, payload: response }))
-    .catch((err) => dispatch({ type: REPOS_REQUEST_ERROR, error: err }))
-}
+    currentRequest = getRepos()
+      .then((response) => JSON.parse(response.body))
+      .then((repos) => dispatch({ type: REPOS_REQUEST_SUCCESS, payload: repos }))
+      .catch((err) => dispatch({ type: REPOS_REQUEST_ERROR, error: err }))
+  }
+}, 1000 * 5)
 
 export const cancelFetchRepos = () => (dispatch) => {
   if (currentRequest) {
     currentRequest.cancel()
-    dispatch({ type: REPOST_REQUEST_CANCELLED })
+    dispatch({ type: REPOS_REQUEST_CANCELLED })
   }
 }
 
@@ -117,7 +118,7 @@ export default function reducer(state = defaultState, action) {
       errorMessage: action.error.message,
     })
 
-  case REPOST_REQUEST_CANCELLED:
+  case REPOS_REQUEST_CANCELLED:
     return assign({}, state, {
       isWorking: false,
       isComplete: false,

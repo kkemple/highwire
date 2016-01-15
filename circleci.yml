@@ -1,0 +1,11 @@
+dependencies:
+  post:
+    - npm i -g tape babel-cli
+deployment:
+  npm:
+    branch: master
+    commands:
+      # login using environment variables
+      - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+      - npm run compile
+      - npm run release

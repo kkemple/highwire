@@ -145,7 +145,9 @@ test('multipart()', (nest) => {
       .reply(200, 'okay')
 
     multipart('http://test.url/resource', {
-      attachments: [['test', `${path.resolve(__dirname, './fixtures/example.txt')}`]],
+      attachments: [
+        ['test', `${path.resolve(__dirname, './fixtures/example.txt')}`],
+      ],
     }, {
       progress: function(event) { console.log(event) },
     })
