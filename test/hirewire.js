@@ -140,17 +140,15 @@ test('multipart()', (nest) => {
   nest.test('with valid response', (t) => {
     t.plan(1)
 
+    const attachments = [
+      ['test', `${path.resolve(__dirname, './fixtures/example.txt')}`],
+    ]
+
     nock('http://test.url')
       .post('/resource')
       .reply(200, 'okay')
 
-    multipart('http://test.url/resource', {
-      attachments: [
-        ['test', `${path.resolve(__dirname, './fixtures/example.txt')}`],
-      ],
-    }, {
-      progress: function(event) { console.log(event) },
-    })
+    multipart('http://test.url/resource', { attachments })
       .then(t.pass)
       .catch(t.fail)
   })

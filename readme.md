@@ -3,11 +3,27 @@
 A high level HTTP client that is easy to build upon.
 
 ## Reasoning
-I love [superagent](https://visionmedia.github.io/superagent/), but I find that I generally need to build more on top of it. Such as cancelable requests, throttling, and reties. `Highwire` provides simple HTTP methods that work great for building complex async network layers, or just to make syncing your React components easier...
+I love [superagent](https://visionmedia.github.io/superagent/), but I find that I generally need to build more on top of it. Such as cancelable requests and promise chains, throttling, and reties. `Highwire` provides simple HTTP methods that work great for building complex async network layers, or just to make syncing your React components easier.
+
+## API
+Highwire exposes a factory function that will return a clean object with RESTful HTTP methods. Those methods are:
+
+```javascript
+get(url, { headers, query, retries })
+post(url, data, {headers, query, retries })
+put(url, data, {headers, query, retries })
+patch(url, data, {headers, query, retries })
+del(url, {headers, query, retries })
+multipart(url, { fields, attachments }, {headers, query, retries, progress })
+```
+
+
+
+## Examples
 
 ```javascript
 import React from 'react'
-import highwireFactory from 'highwire'
+import highwireFactory from '@kkemple/highwire'
 
 const { get } = highwireFactory()
 const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
@@ -55,7 +71,7 @@ export default React.createClass({
 import assign from 'lodash.assign'
 import throttle from 'lodash.throttle'
 
-import highwireFactory from 'highwire'
+import highwireFactory from '@kkemple/highwire'
 
 const { get } = highwireFactory()
 const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
@@ -100,6 +116,7 @@ export default function reducer(state = defaultState, action) {
   case REPOS_REQUEST:
     return assign({}, state, {
       isWorking: true,
+      isComplete: false,
       hasError: false,
     })
 
@@ -122,7 +139,7 @@ export default function reducer(state = defaultState, action) {
     return assign({}, state, {
       isWorking: false,
       isComplete: false,
-      hasError: true,
+      hasError: false,
     })
 
   default:
@@ -130,4 +147,18 @@ export default function reducer(state = defaultState, action) {
   }
 }
 
+// ...sending multipart form data
+
+const attachments = [
+  ['test', './fixtures/example.txt'],
+]
+const progress = (event) => console.log(event)
+
+multipart('http://some.url/submit', { attachments }, { progress })
+  .then((response) => JSON.parse(response.body))
+  .then((data) => console.log(data))
+  .catch((err) => console.log(err))
+
 ```
+
+> For more examples, check out the [examples folder](./examples).

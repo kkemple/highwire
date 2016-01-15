@@ -1,6 +1,6 @@
 {
   "name": "@kkemple/highwire",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A high level HTTP client",
   "main": "dist/index.js",
   "scripts": {
