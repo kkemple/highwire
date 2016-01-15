@@ -3,7 +3,7 @@ dependencies:
     - npm i -g tape babel-cli
 
 deployment:
-  master:
+  npm:
     branch: master
     commands:
       - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
