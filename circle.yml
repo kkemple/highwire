@@ -1,7 +1,3 @@
-dependencies:
-  post:
-    - npm i -g tape babel-cli
-
 deployment:
   npm:
     branch: master
