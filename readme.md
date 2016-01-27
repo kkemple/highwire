@@ -9,6 +9,14 @@ I love [superagent](https://visionmedia.github.io/superagent/), but I find that 
 Highwire exposes a factory function that will return a clean object with RESTful HTTP methods. Those methods are:
 
 ```javascript
+import highwire from '@mls-digital/highwire'
+
+const { get, post, put, patch, del, multipart } = highwire()
+
+// or
+
+import get from '@mls-digital/highwire/http-methods/get'
+
 get(url, { headers, query, retries })
 post(url, data, {headers, query, retries })
 put(url, data, {headers, query, retries })
