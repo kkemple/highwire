@@ -3,26 +3,41 @@
 A high level HTTP client that is easy to build upon.
 
 ## Reasoning
-I love [superagent](https://visionmedia.github.io/superagent/), but I find that I generally need to build more on top of it. Such as cancelable requests and promise chains, throttling, and reties. `Highwire` provides simple HTTP methods that work great for building complex async network layers, or just to make syncing your React components easier.
+[Superagent](https://visionmedia.github.io/superagent/) is a fantastic module, but I find that I generally need to build more on top of it. Such as cancelable requests and reties. `Highwire` provides this functionality through simple HTTP methods that work great for building complex network layers, or just to make syncing your React components easier.
 
 ## API
 Highwire exposes a factory function that will return a clean object with RESTful HTTP methods. Those methods are:
 
 ```javascript
+get(url, { headers, query, retries })
+post(url, data, [,{ headers, query, retries })
+put(url, data, { headers, query, retries })
+patch(url, data, { headers, query, retries })
+del(url, { headers, query, retries })
+multipart(url, { fields, attachments }, { headers, query, retries, progress })
+```
+
+> Highwire offers a number of ways to pull in the needed methods
+
+```javascript
 import highwire from '@mls-digital/highwire'
+
+const http = highwire()
+http.get()
+
+// or
 
 const { get, post, put, patch, del, multipart } = highwire()
 
 // or
 
 import get from '@mls-digital/highwire/http-methods/get'
+import post from '@mls-digital/highwire/http-methods/post'
+import put from '@mls-digital/highwire/http-methods/put'
+import patch from '@mls-digital/highwire/http-methods/patch'
+import del from '@mls-digital/highwire/http-methods/delete'
+import multipart from '@mls-digital/highwire/http-methods/multipart'
 
-get(url, { headers, query, retries })
-post(url, data, {headers, query, retries })
-put(url, data, {headers, query, retries })
-patch(url, data, {headers, query, retries })
-del(url, {headers, query, retries })
-multipart(url, { fields, attachments }, {headers, query, retries, progress })
 ```
 
 
@@ -168,5 +183,3 @@ multipart('http://some.url/submit', { attachments }, { progress })
   .catch((err) => console.log(err))
 
 ```
-
-> For more examples, check out the [examples folder](./examples).
