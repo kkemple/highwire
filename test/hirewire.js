@@ -2,7 +2,7 @@ import nock from 'nock'
 import path from 'path'
 import test from 'tape'
 
-import highwireFactory from '../lib/index'
+import highwireFactory from '../src/index'
 
 const { get, post, put, patch, del, multipart } = highwireFactory()
 
