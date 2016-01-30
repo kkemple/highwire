@@ -91,27 +91,24 @@ export default React.createClass({
 
 import assign from 'lodash.assign'
 import throttle from 'lodash.throttle'
+import highwire from '@mls-digital/highwire'
 
-import highwireFactory from '@kkemple/highwire'
+const { get } = highwire()
 
-const { get } = highwireFactory()
 const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
 const retries = 5
-const getRepos = () => get('https://api.github.com/repos', { headers, retries })
 
+function getRepos() {
+  return get('https://api.github.com/repos', { headers, retries })
+}
+
+/* action types */
 const REPOS_REQUEST = 'REPOS_REQUEST'
 const REPOS_REQUEST_SUCCESS = 'REPOS_REQUEST_SUCCESS'
 const REPOS_REQUEST_ERROR = 'REPOST_REQUEST_ERROR'
 const REPOS_REQUEST_CANCELLED = 'REPOST_REQUEST_CANCELLED'
 
-const defaultState = {
-  isComplete: false,
-  hasError: false,
-  isWorking: false,
-  errorMessage: undefined,
-  repos: [],
-}
-
+/* action creators */
 let currentRequest
 
 export const fetchRepos = throttle(function fetchRepos() {
@@ -130,6 +127,15 @@ export const cancelFetchRepos = () => (dispatch) => {
     currentRequest.cancel()
     dispatch({ type: REPOS_REQUEST_CANCELLED })
   }
+}
+
+/* reducer */
+const defaultState = {
+  isComplete: false,
+  hasError: false,
+  isWorking: false,
+  errorMessage: undefined,
+  repos: [],
 }
 
 export default function reducer(state = defaultState, action) {
