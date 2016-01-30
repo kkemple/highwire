@@ -1,13 +1,13 @@
 {
-  "name": "@kkemple/highwire",
+  "name": "@mls-digital/highwire",
   "version": "1.0.2",
   "description": "A high level HTTP client",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "lint": "node_modules/.bin/eslint .",
     "test": "node_modules/.bin/tape -r babel-register test/*.js | faucet",
-    "compile": "node_modules/.bin/rimraf dist && node_modules/.bin/babel lib --out-dir dist",
-    "dev": "node_modules/.bin/rimraf dist && node_modules/.bin/babel lib --out-dir dist -w",
+    "compile": "node_modules/.bin/rimraf dist && node_modules/.bin/babel src --out-dir lib",
+    "dev": "node_modules/.bin/rimraf dist && node_modules/.bin/babel src --out-dir lib -w",
     "release": "npm publish --access public"
   },
   "repository": {

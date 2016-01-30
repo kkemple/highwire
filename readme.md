@@ -31,12 +31,12 @@ const { get, post, put, patch, del, multipart } = highwire()
 
 // or
 
-import get from '@mls-digital/highwire/http-methods/get'
-import post from '@mls-digital/highwire/http-methods/post'
-import put from '@mls-digital/highwire/http-methods/put'
-import patch from '@mls-digital/highwire/http-methods/patch'
-import del from '@mls-digital/highwire/http-methods/delete'
-import multipart from '@mls-digital/highwire/http-methods/multipart'
+import get from '@mls-digital/highwire/lib/get'
+import post from '@mls-digital/highwire/lib/post'
+import put from '@mls-digital/highwire/lib/put'
+import patch from '@mls-digital/highwire/lib/patch'
+import del from '@mls-digital/highwire/lib/delete'
+import multipart from '@mls-digital/highwire/lib/multipart'
 
 ```
 
