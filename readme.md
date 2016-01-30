@@ -40,8 +40,6 @@ import multipart from '@mls-digital/highwire/lib/multipart'
 
 ```
 
-
-
 ## Examples
 
 ```javascript
