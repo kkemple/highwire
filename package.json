@@ -1,6 +1,6 @@
 {
   "name": "@mls-digital/highwire",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A high level HTTP client",
   "main": "lib/index.js",
   "scripts": {
