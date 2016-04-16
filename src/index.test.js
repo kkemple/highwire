@@ -2,9 +2,7 @@ import nock from 'nock'
 import path from 'path'
 import test from 'tape'
 
-import highwireFactory from '../src/index'
-
-const { get, post, put, patch, del, multipart } = highwireFactory()
+import { get, post, put, patch, del, multipart } from './index'
 
 test('get()', (nest) => {
   nest.test('with valid response', (t) => {
@@ -15,8 +13,8 @@ test('get()', (nest) => {
       .reply(200, 'okay')
 
     get('http://test.url/resource')
-      .then(t.pass)
-      .catch(t.fail)
+      .then(() => t.pass('request successful'))
+      .catch((err) => t.fail(err))
   })
 
   nest.test('with an invalid response', (t) => {
@@ -27,8 +25,8 @@ test('get()', (nest) => {
       .replyWithError('not okay')
 
     get('http://test.url/resource')
-      .then(t.fail)
-      .catch(t.pass)
+      .then((err) => t.fail(err))
+      .catch(() => t.pass('request successful'))
   })
 })
 
@@ -41,8 +39,8 @@ test('post()', (nest) => {
       .reply(200, 'okay')
 
     post('http://test.url/resource', { test: 'test' })
-      .then(t.pass)
-      .catch(t.fail)
+      .then(() => t.pass('request successful'))
+      .catch((err) => t.fail(err))
   })
 
   nest.test('with an invalid response', (t) => {
@@ -53,8 +51,8 @@ test('post()', (nest) => {
       .replyWithError('not okay')
 
     post('http://test.url/resource', { test: 'test' })
-      .then(t.fail)
-      .catch(t.pass)
+      .then((err) => t.fail(err))
+      .catch(() => t.pass('request successful'))
   })
 })
 
@@ -67,8 +65,8 @@ test('patch()', (nest) => {
       .reply(200, 'okay')
 
     patch('http://test.url/resource', { test: 'test' })
-      .then(t.pass)
-      .catch(t.fail)
+      .then(() => t.pass('request successful'))
+      .catch((err) => t.fail(err))
   })
 
   nest.test('with an invalid response', (t) => {
@@ -79,8 +77,8 @@ test('patch()', (nest) => {
       .replyWithError('not okay')
 
     patch('http://test.url/resource', { test: 'test' })
-      .then(t.fail)
-      .catch(t.pass)
+      .then((err) => t.fail(err))
+      .catch(() => t.pass('request successful'))
   })
 })
 
@@ -93,8 +91,8 @@ test('put()', (nest) => {
       .reply(200, 'okay')
 
     put('http://test.url/resource', { test: 'test' })
-      .then(t.pass)
-      .catch(t.fail)
+      .then(() => t.pass('request successful'))
+      .catch((err) => t.fail(err))
   })
 
   nest.test('with an invalid response', (t) => {
@@ -105,8 +103,8 @@ test('put()', (nest) => {
       .replyWithError('not okay')
 
     put('http://test.url/resource', { test: 'test' })
-      .then(t.fail)
-      .catch(t.pass)
+      .then((err) => t.fail(err))
+      .catch(() => t.pass('request successful'))
   })
 })
 
@@ -119,8 +117,8 @@ test('del()', (nest) => {
       .reply(200, 'okay')
 
     del('http://test.url/resource')
-      .then(t.pass)
-      .catch(t.fail)
+      .then(() => t.pass('request successful'))
+      .catch((err) => t.fail(err))
   })
 
   nest.test('with an invalid response', (t) => {
@@ -131,8 +129,8 @@ test('del()', (nest) => {
       .replyWithError('not okay')
 
     del('http://test.url/resource')
-      .then(t.fail)
-      .catch(t.pass)
+      .then((err) => t.fail(err))
+      .catch(() => t.pass('request successful'))
   })
 })
 
@@ -141,7 +139,7 @@ test('multipart()', (nest) => {
     t.plan(1)
 
     const attachments = [
-      ['test', `${path.resolve(__dirname, './fixtures/example.txt')}`],
+      ['test', `${path.resolve(process.cwd(), './fixtures/example.txt')}`],
     ]
 
     nock('http://test.url')
@@ -149,8 +147,8 @@ test('multipart()', (nest) => {
       .reply(200, 'okay')
 
     multipart('http://test.url/resource', { attachments })
-      .then(t.pass)
-      .catch(t.fail)
+      .then(() => t.pass('request successful'))
+      .catch((err) => t.fail(err))
   })
 
   nest.test('with an invalid response', (t) => {
@@ -161,7 +159,7 @@ test('multipart()', (nest) => {
       .replyWithError('not okay')
 
     post('http://test.url/resource', { test: 'test' })
-      .then(t.fail)
-      .catch(t.pass)
+      .then((err) => t.fail(err))
+      .catch(() => t.pass('request successful'))
   })
 })

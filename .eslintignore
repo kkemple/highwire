@@ -1,2 +1,5 @@
 dist
-readme.md
+node_modules
+coverage
+lib
+test

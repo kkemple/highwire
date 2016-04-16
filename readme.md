@@ -3,67 +3,79 @@
 A high level HTTP client that is easy to build upon.
 
 ## Reasoning
-[Superagent](https://visionmedia.github.io/superagent/) is a fantastic module, but I find that I generally need to build more on top of it. Such as cancelable requests and reties. `Highwire` provides this functionality through simple HTTP methods that work great for building complex network layers, or just to make syncing your React components easier.
+[Superagent](https://visionmedia.github.io/superagent/) is a fantastic module, but I find that I generally need to wrap it up for use in a more functional approach. `Highwire` provides this functional approach through simple HTTP methods that work great for building complex network layers, or just to make syncing your React components easier. They are meant to be wrapped in higher order functions to build complex network logic.
 
 ## API
-Highwire exposes a factory function that will return a clean object with RESTful HTTP methods. Those methods are:
+Highwire exposes an object with RESTful HTTP methods. Those methods are:
 
-```javascript
-get(url, { headers, query, retries })
-post(url, data, [,{ headers, query, retries })
-put(url, data, { headers, query, retries })
-patch(url, data, { headers, query, retries })
-del(url, { headers, query, retries })
-multipart(url, { fields, attachments }, { headers, query, retries, progress })
-```
+### get(url [, options: { headers, query } ])
 
-> Highwire offers a number of ways to pull in the needed methods
+  - url: full url of request
+  - options:
+    - headers: object of headers to attatch to request
+    - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
 
-```javascript
-import highwire from '@mls-digital/highwire'
+### post(url, data [, options: { headers, query } ])
 
-const http = highwire()
-http.get()
+  - url: full url of request
+  - data: body to send with request
+  - options:
+    - headers: object of headers to attatch to request
+    - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
+    - progress: function that is called on progress event of request; returns: `{ direction: string, lengthComputable: boolean, loaded: number, total: number }`
 
-// or
+### put(url, data [, options: { headers, query } ])
 
-const { get, post, put, patch, del, multipart } = highwire()
+  - url: full url of request
+  - data: body to send with request
+  - options:
+    - headers: object of headers to attatch to request
+    - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
 
-// or
+### patch(url, data [, options: { headers, query } ])
 
-import get from '@mls-digital/highwire/lib/get'
-import post from '@mls-digital/highwire/lib/post'
-import put from '@mls-digital/highwire/lib/put'
-import patch from '@mls-digital/highwire/lib/patch'
-import del from '@mls-digital/highwire/lib/delete'
-import multipart from '@mls-digital/highwire/lib/multipart'
+  - url: full url of request
+  - data: body to send with request
+  - options:
+    - headers: object of headers to attatch to request
+    - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
 
-```
+### del(url, [, options: { headers, query } ])
+
+  - url: full url of request
+  - options:
+    - headers: object of headers to attatch to request
+    - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
+
+### multipart(url, { meta: fields, attachments } [, options: { headers, query, progress }])
+
+- url: full url of request
+- meta:
+  - fields[[name, value]] any form fields to attach to request
+  - attachments[[name, path, filename]]: any attachments to attach to request
+    - [superagent docs](https://visionmedia.github.io/superagent/#multipart-requests)
+- options:
+  - headers: object of headers to attatch to request
+  - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
+  - progress: function that is called on progress event of request; returns: `{ direction: string, lengthComputable: boolean, loaded: number, total: number }`
+
+
 
 ## Examples
 
 ```javascript
 import React from 'react'
-import highwireFactory from '@kkemple/highwire'
+import { get } from 'highwire'
 
-const { get } = highwireFactory()
 const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
-const retries = 5
 
 export default React.createClass({
   componentWillMount() {
     // fetch some repos
-    this.reposRequest = get('https://api.github.com/repos', { headers, retries })
-    this.reposRequest
+    get('https://api.github.com/repos', { headers })
       .then((response) => JSON.parse(response.body))
       .then((repos) => this.setState({ repos }))
       .catch((err) => this.setState({ err }))
-  },
-
-  componentWillUnmount() {
-    // cancel promise chain and http request to github
-    // has no affect if promise has resolved already
-    this.reposRequest.cancel()
   },
 
   render() {
@@ -91,16 +103,7 @@ export default React.createClass({
 
 import assign from 'lodash.assign'
 import throttle from 'lodash.throttle'
-import highwire from '@mls-digital/highwire'
-
-const { get } = highwire()
-
-const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
-const retries = 5
-
-function getRepos() {
-  return get('https://api.github.com/repos', { headers, retries })
-}
+import { get } from 'highwire'
 
 /* action types */
 const REPOS_REQUEST = 'REPOS_REQUEST'
@@ -109,25 +112,18 @@ const REPOS_REQUEST_ERROR = 'REPOST_REQUEST_ERROR'
 const REPOS_REQUEST_CANCELLED = 'REPOST_REQUEST_CANCELLED'
 
 /* action creators */
-let currentRequest
-
 export const fetchRepos = throttle(function fetchRepos() {
   return (dispatch) => {
     dispatch({ type: REPOS_REQUEST })
 
-    currentRequest = getRepos()
+    const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
+
+    get('https://api.github.com/repos', { headers })
       .then((response) => JSON.parse(response.body))
       .then((repos) => dispatch({ type: REPOS_REQUEST_SUCCESS, payload: repos }))
       .catch((err) => dispatch({ type: REPOS_REQUEST_ERROR, error: err }))
   }
 }, 1000 * 5)
-
-export const cancelFetchRepos = () => (dispatch) => {
-  if (currentRequest) {
-    currentRequest.cancel()
-    dispatch({ type: REPOS_REQUEST_CANCELLED })
-  }
-}
 
 /* reducer */
 const defaultState = {
@@ -146,14 +142,12 @@ export default function reducer(state = defaultState, action) {
       isComplete: false,
       hasError: false,
     })
-
   case REPOS_REQUEST_SUCCESS:
     return assign({}, state, {
       isWorking: false,
       isComplete: true,
       repos: action.payload.repos,
     })
-
   case REPOS_REQUEST_ERROR:
     return assign({}, state, {
       isWorking: false,
@@ -161,21 +155,12 @@ export default function reducer(state = defaultState, action) {
       hasError: true,
       errorMessage: action.error.message,
     })
-
-  case REPOS_REQUEST_CANCELLED:
-    return assign({}, state, {
-      isWorking: false,
-      isComplete: false,
-      hasError: false,
-    })
-
   default:
     return state
   }
 }
 
-// ...sending multipart form data
-
+// sending multipart form data example
 const attachments = [
   ['test', './fixtures/example.txt'],
 ]
