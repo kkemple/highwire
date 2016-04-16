@@ -5,7 +5,7 @@ function get(url, {
   query: query = {},
 } = {}) {
   return new Promise((res, rej) => {
-    const req = request.get(url)
+    request.get(url)
       .set(headers)
       .query(query)
       .end((err, response) => {
@@ -20,7 +20,7 @@ function del(url, {
   query: query = {},
 } = {}) {
   return new Promise((res, rej) => {
-    const req = request.delete(url)
+    request.delete(url)
       .set(headers)
       .query(query)
       .end((err, response) => {
@@ -36,7 +36,7 @@ function post(url, data = {}, {
   progress: progress = () => {},
 } = {}) {
   return new Promise((res, rej) => {
-    const req = request.post(url)
+    request.post(url)
       .on('progress', progress)
       .set(headers)
       .query(query)
@@ -53,7 +53,7 @@ function patch(url, data = {}, {
   query: query = {},
 } = {}) {
   return new Promise((res, rej) => {
-    const req = request.patch(url)
+    request.patch(url)
       .set(headers)
       .query(query)
       .send(data)
@@ -69,7 +69,7 @@ function put(url, data = {}, {
     query: query = {},
 } = {}) {
   return new Promise((res, rej) => {
-    const req = request.put(url)
+    request.put(url)
       .set(headers)
       .query(query)
       .send(data)

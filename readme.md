@@ -1,6 +1,11 @@
 # Highwire
 
-A high level HTTP client that is easy to build upon.
+High level HTTP methods that are easy to build upon.
+
+[![Code Climate](https://codeclimate.com/github/kkemple/highwire/badges/gpa.svg)](https://codeclimate.com/github/kkemple/highwire)
+[![Test Coverage](https://codeclimate.com/github/kkemple/highwire/badges/coverage.svg)](https://codeclimate.com/github/kkemple/highwire/coverage)
+[![Issue Count](https://codeclimate.com/github/kkemple/highwire/badges/issue_count.svg)](https://codeclimate.com/github/kkemple/highwire)
+[![Circle CI](https://circleci.com/gh/kkemple/highwire.svg?style=svg)](https://circleci.com/gh/kkemple/highwire)
 
 ## Reasoning
 [Superagent](https://visionmedia.github.io/superagent/) is a fantastic module, but I find that I generally need to wrap it up for use in a more functional approach. `Highwire` provides this functional approach through simple HTTP methods that work great for building complex network layers, or just to make syncing your React components easier. They are meant to be wrapped in higher order functions to build complex network logic.
