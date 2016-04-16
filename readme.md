@@ -114,7 +114,6 @@ import { get } from 'highwire'
 const REPOS_REQUEST = 'REPOS_REQUEST'
 const REPOS_REQUEST_SUCCESS = 'REPOS_REQUEST_SUCCESS'
 const REPOS_REQUEST_ERROR = 'REPOST_REQUEST_ERROR'
-const REPOS_REQUEST_CANCELLED = 'REPOST_REQUEST_CANCELLED'
 
 /* action creators */
 export const fetchRepos = throttle(function fetchRepos() {
