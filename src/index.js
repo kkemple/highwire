@@ -3,9 +3,11 @@ import request from 'superagent'
 function get(url, {
   headers: headers = {},
   query: query = {},
+  timeout: timeout = 0,
 } = {}) {
   return new Promise((res, rej) => {
     request.get(url)
+      .timeout(timeout)
       .set(headers)
       .query(query)
       .end((err, response) => {
@@ -18,9 +20,11 @@ function get(url, {
 function del(url, {
   headers: headers = {},
   query: query = {},
+  timeout: timeout = 0,
 } = {}) {
   return new Promise((res, rej) => {
     request.delete(url)
+      .timeout(timeout)
       .set(headers)
       .query(query)
       .end((err, response) => {
@@ -33,11 +37,13 @@ function del(url, {
 function post(url, data = {}, {
   headers: headers = {},
   query: query = {},
+  timeout: timeout = 0,
   progress: progress = () => {},
 } = {}) {
   return new Promise((res, rej) => {
     request.post(url)
       .on('progress', progress)
+      .timeout(timeout)
       .set(headers)
       .query(query)
       .send(data)
@@ -51,9 +57,11 @@ function post(url, data = {}, {
 function patch(url, data = {}, {
   headers: headers = {},
   query: query = {},
+  timeout: timeout = 0,
 } = {}) {
   return new Promise((res, rej) => {
     request.patch(url)
+      .timeout(timeout)
       .set(headers)
       .query(query)
       .send(data)
@@ -67,9 +75,11 @@ function patch(url, data = {}, {
 function put(url, data = {}, {
     headers: headers = {},
     query: query = {},
+    timeout: timeout = 0,
 } = {}) {
   return new Promise((res, rej) => {
     request.put(url)
+      .timeout(timeout)
       .set(headers)
       .query(query)
       .send(data)
@@ -86,11 +96,13 @@ function multipart(url, {
 } = {}, {
   headers: headers = {},
   query: query = {},
+  timeout: timeout = 0,
   progress: progress = () => {},
 } = {}) {
   return new Promise((res, rej) => {
     const req = request.post(url)
       .on('progress', progress)
+      .timeout(timeout)
       .set(headers)
       .query(query)
 

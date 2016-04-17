@@ -19,6 +19,7 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
   - options:
     - headers: object of headers to attatch to request
     - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
+    - timeout: cancel request after specified timeout (throws Error)
 
 ### post(url, data [, options: { headers, query } ])
 
@@ -27,6 +28,7 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
   - options:
     - headers: object of headers to attatch to request
     - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
+    - timeout: cancel request after specified timeout (throws Error)
     - progress: function that is called on progress event of request; returns: `{ direction: string, lengthComputable: boolean, loaded: number, total: number }`
 
 ### put(url, data [, options: { headers, query } ])
@@ -36,6 +38,7 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
   - options:
     - headers: object of headers to attatch to request
     - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
+    - timeout: cancel request after specified timeout (throws Error)
 
 ### patch(url, data [, options: { headers, query } ])
 
@@ -44,6 +47,7 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
   - options:
     - headers: object of headers to attatch to request
     - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
+    - timeout: cancel request after specified timeout (throws Error)
 
 ### del(url, [, options: { headers, query } ])
 
@@ -51,6 +55,7 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
   - options:
     - headers: object of headers to attatch to request
     - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
+    - timeout: cancel request after specified timeout (throws Error)
 
 ### multipart(url, { meta: fields, attachments } [, options: { headers, query, progress }])
 
@@ -62,11 +67,12 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
 - options:
   - headers: object of headers to attatch to request
   - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
+  - timeout: cancel request after specified timeout (throws Error)
   - progress: function that is called on progress event of request; returns: `{ direction: string, lengthComputable: boolean, loaded: number, total: number }`
 
 
 
-## Examples
+## Example
 
 ```javascript
 import React from 'react'
@@ -104,73 +110,14 @@ export default React.createClass({
   },
 })
 
-// ... more advanced redux/thunk example using higher order functions
-
-import assign from 'lodash.assign'
-import throttle from 'lodash.throttle'
-import { get } from 'highwire'
-
-/* action types */
-const REPOS_REQUEST = 'REPOS_REQUEST'
-const REPOS_REQUEST_SUCCESS = 'REPOS_REQUEST_SUCCESS'
-const REPOS_REQUEST_ERROR = 'REPOST_REQUEST_ERROR'
-
-/* action creators */
-export const fetchRepos = throttle(function fetchRepos() {
-  return (dispatch) => {
-    dispatch({ type: REPOS_REQUEST })
-
-    const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
-
-    get('https://api.github.com/repos', { headers })
-      .then((response) => JSON.parse(response.body))
-      .then((repos) => dispatch({ type: REPOS_REQUEST_SUCCESS, payload: repos }))
-      .catch((err) => dispatch({ type: REPOS_REQUEST_ERROR, error: err }))
-  }
-}, 1000 * 5)
-
-/* reducer */
-const defaultState = {
-  isComplete: false,
-  hasError: false,
-  isWorking: false,
-  errorMessage: undefined,
-  repos: [],
-}
-
-export default function reducer(state = defaultState, action) {
-  switch (action.type) {
-  case REPOS_REQUEST:
-    return assign({}, state, {
-      isWorking: true,
-      isComplete: false,
-      hasError: false,
-    })
-  case REPOS_REQUEST_SUCCESS:
-    return assign({}, state, {
-      isWorking: false,
-      isComplete: true,
-      repos: action.payload.repos,
-    })
-  case REPOS_REQUEST_ERROR:
-    return assign({}, state, {
-      isWorking: false,
-      isComplete: false,
-      hasError: true,
-      errorMessage: action.error.message,
-    })
-  default:
-    return state
-  }
-}
-
 // sending multipart form data example
 const attachments = [
   ['test', './fixtures/example.txt'],
 ]
 const progress = (event) => console.log(event)
+const timeout = 5000
 
-multipart('http://some.url/submit', { attachments }, { progress })
+multipart('http://some.url/submit', { attachments }, { progress, timeout })
   .then((response) => JSON.parse(response.body))
   .then((data) => console.log(data))
   .catch((err) => console.log(err))

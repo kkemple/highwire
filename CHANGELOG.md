@@ -6,3 +6,6 @@
 
 ### 1.0.2
 - fix circle ci build
+
+### 1.1.0
+- add support for request timeouts
