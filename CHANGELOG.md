@@ -9,3 +9,6 @@
 
 ### 1.1.0
 - add support for request timeouts
+
+### 1.1.3
+- update readme, showcase better examples
