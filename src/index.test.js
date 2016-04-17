@@ -28,6 +28,22 @@ test('get()', (nest) => {
       .then((err) => t.fail(err))
       .catch(() => t.pass('request successful'))
   })
+
+  nest.test('with timeout', (t) => {
+    t.plan(1)
+
+    nock('http://test.url')
+      .get('/resource')
+      .delay(20)
+      .reply(200, 'okay')
+
+    get('http://test.url/resource', { timeout: 10 })
+      .then(() => t.fail('timeout did not fail request'))
+      .catch((err) => {
+        if (err.timeout) t.pass('request aborted after timeout')
+        else t.fail('timeout did not fail request')
+      })
+  })
 })
 
 test('post()', (nest) => {
@@ -53,6 +69,22 @@ test('post()', (nest) => {
     post('http://test.url/resource', { test: 'test' })
       .then((err) => t.fail(err))
       .catch(() => t.pass('request successful'))
+  })
+
+  nest.test('with timeout', (t) => {
+    t.plan(1)
+
+    nock('http://test.url')
+      .post('/resource', { test: 'test' })
+      .delay(20)
+      .reply(200, 'okay')
+
+    post('http://test.url/resource', { test: 'test' }, { timeout: 10 })
+      .then(() => t.fail('timeout did not fail request'))
+      .catch((err) => {
+        if (err.timeout) t.pass('request aborted after timeout')
+        else t.fail('timeout did not fail request')
+      })
   })
 })
 
@@ -80,6 +112,22 @@ test('patch()', (nest) => {
       .then((err) => t.fail(err))
       .catch(() => t.pass('request successful'))
   })
+
+  nest.test('with timeout', (t) => {
+    t.plan(1)
+
+    nock('http://test.url')
+      .patch('/resource', { test: 'test' })
+      .delay(20)
+      .reply(200, 'okay')
+
+    patch('http://test.url/resource', { test: 'test' }, { timeout: 10 })
+      .then(() => t.fail('timeout did not fail request'))
+      .catch((err) => {
+        if (err.timeout) t.pass('request aborted after timeout')
+        else t.fail('timeout did not fail request')
+      })
+  })
 })
 
 test('put()', (nest) => {
@@ -106,6 +154,22 @@ test('put()', (nest) => {
       .then((err) => t.fail(err))
       .catch(() => t.pass('request successful'))
   })
+
+  nest.test('with timeout', (t) => {
+    t.plan(1)
+
+    nock('http://test.url')
+      .put('/resource', { test: 'test' })
+      .delay(20)
+      .reply(200, 'okay')
+
+    put('http://test.url/resource', { test: 'test' }, { timeout: 10 })
+      .then(() => t.fail('timeout did not fail request'))
+      .catch((err) => {
+        if (err.timeout) t.pass('request aborted after timeout')
+        else t.fail('timeout did not fail request')
+      })
+  })
 })
 
 test('del()', (nest) => {
@@ -131,6 +195,22 @@ test('del()', (nest) => {
     del('http://test.url/resource')
       .then((err) => t.fail(err))
       .catch(() => t.pass('request successful'))
+  })
+
+  nest.test('with timeout', (t) => {
+    t.plan(1)
+
+    nock('http://test.url')
+      .delete('/resource')
+      .delay(20)
+      .reply(200, 'okay')
+
+    del('http://test.url/resource', { timeout: 10 })
+      .then(() => t.fail('timeout did not fail request'))
+      .catch((err) => {
+        if (err.timeout) t.pass('request aborted after timeout')
+        else t.fail('timeout did not fail request')
+      })
   })
 })
 
@@ -161,5 +241,25 @@ test('multipart()', (nest) => {
     post('http://test.url/resource', { test: 'test' })
       .then((err) => t.fail(err))
       .catch(() => t.pass('request successful'))
+  })
+
+  nest.test('with timeout', (t) => {
+    t.plan(1)
+
+    const attachments = [
+      ['test', `${path.resolve(process.cwd(), './fixtures/example.txt')}`],
+    ]
+
+    nock('http://test.url')
+      .post('/resource')
+      .delay(20)
+      .reply(200, 'okay')
+
+    multipart('http://test.url/resource', { attachments }, { timeout: 10 })
+      .then(() => t.fail('timeout did not fail request'))
+      .catch((err) => {
+        if (err.timeout) t.pass('request aborted after timeout')
+        else t.fail('timeout did not fail request')
+      })
   })
 })

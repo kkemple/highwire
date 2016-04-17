@@ -1,12 +1,12 @@
 {
   "name": "highwire",
-  "version": "1.0.2",
+  "version": "1.1.2",
   "description": "A high level HTTP client",
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint .",
     "test:ci": "npm run lint && npm run test:coverage",
-    "test": "istanbul cover tape -- -r babel-register src/**/*.test.js",
+    "test": "tape -r babel-register src/**/*.test.js",
     "test:coverage": "istanbul cover tape -- -r babel-register src/**/*.test.js",
     "compile": "rimraf dist && babel src --out-dir lib",
     "dev": "rimraf dist && babel src --out-dir lib -w"
