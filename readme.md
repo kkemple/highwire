@@ -21,6 +21,21 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
     - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
     - timeout: cancel request after specified timeout (throws Error)
 
+```javascript
+import { get } from 'highwire'
+import { User } from './models'
+
+const headers = { authorization: 'token <token>' }
+const query = { sortOrder: 'desc' }
+const timeout = 3000
+
+get('/users', { headers, query, timeout })
+  .then((response) => response.body)
+  .then((body) => JSON.parse(body))
+  .then((users) => console.log(users))
+  .catch((err) => console.log(err))
+```
+
 ### post(url, data [, options: { headers, query } ])
 
   - url: full url of request
@@ -31,6 +46,22 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
     - timeout: cancel request after specified timeout (throws Error)
     - progress: function that is called on progress event of request; returns: `{ direction: string, lengthComputable: boolean, loaded: number, total: number }`
 
+```javascript
+import { post } from 'highwire'
+import { User } from './models'
+
+const headers = { authorization: 'token <token>' }
+const timeout = 3000
+const progress = (event) => console.log(event.loaded))
+const user = new User({ name: 'highwire' })
+
+post('/users', user.toJSON(), { headers, timeout, progress })
+  .then((response) => response.body)
+  .then((body) => JSON.parse(body))
+  .then((user) => console.log(user))
+  .catch((err) => console.log(err))
+```
+
 ### put(url, data [, options: { headers, query } ])
 
   - url: full url of request
@@ -39,6 +70,22 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
     - headers: object of headers to attatch to request
     - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
     - timeout: cancel request after specified timeout (throws Error)
+
+```javascript
+import { put } from 'highwire'
+import { User } from './models'
+
+const headers = { authorization: 'token <token>' }
+const timeout = 3000
+
+User.find({ name: 'highwire' })
+  .then((user) => user.addScope('some-action'))
+  .then((user) => put(`/users/${user.id}`, user.toJSON(), { headers, timeout }))
+  .then((response) => response.body)
+  .then((body) => JSON.parse(body))
+  .then((user) => console.log(user))
+  .catch((err) => console.log(err))
+```
 
 ### patch(url, data [, options: { headers, query } ])
 
@@ -49,6 +96,22 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
     - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
     - timeout: cancel request after specified timeout (throws Error)
 
+```javascript
+import { patch } from 'highwire'
+import { User } from './models'
+
+const headers = { authorization: 'token <token>' }
+const timeout = 3000
+
+User.find({ name: 'highwire' })
+  .then((user) => user.addScope('some-action'))
+  .then((user) => patch(`/users/${user.id}`, user.toJSON(), { headers, timeout }))
+  .then((response) => response.body)
+  .then((body) => JSON.parse(body))
+  .then((user) => console.log(user))
+  .catch((err) => console.log(err))
+```
+
 ### del(url, [, options: { headers, query } ])
 
   - url: full url of request
@@ -56,6 +119,19 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
     - headers: object of headers to attatch to request
     - query: object of query parameters to attach to request (DO NOT USE: if url contains query params)
     - timeout: cancel request after specified timeout (throws Error)
+
+```javascript
+import { del } from 'highwire'
+import { User } from './models'
+
+const headers = { authorization: 'token <token>' }
+const timeout = 3000
+
+User.find({ name: 'highwire' })
+  .then((user) => del(`/users/${user.id}`, { headers, timeout }))
+  .then(() => console.log('user deleted'))
+  .catch((err) => console.log(err))
+```
 
 ### multipart(url, { meta: fields, attachments } [, options: { headers, query, progress }])
 
@@ -70,56 +146,21 @@ Highwire exposes an object with RESTful HTTP methods. Those methods are:
   - timeout: cancel request after specified timeout (throws Error)
   - progress: function that is called on progress event of request; returns: `{ direction: string, lengthComputable: boolean, loaded: number, total: number }`
 
-
-
-## Example
-
 ```javascript
-import React from 'react'
-import { get } from 'highwire'
-
-const headers = { authorization: `token ${process.env.GITHUB_AUTH_TOKEN}` }
-
-export default React.createClass({
-  componentWillMount() {
-    // fetch some repos
-    get('https://api.github.com/repos', { headers })
-      .then((response) => JSON.parse(response.body))
-      .then((repos) => this.setState({ repos }))
-      .catch((err) => this.setState({ err }))
-  },
-
-  render() {
-    const { repos, err } = this.state
-
-    if (err) return (
-      <div className="error">{err.message}</div>
-    )
-
-    return (
-      <div className="repos">
-        <ul>
-          {
-            repos.length ?
-              repos.map(repo => <li>{repo.name}</li>) :
-              <li>No repos found...</li>
-          }
-        </ul>
-      </div>
-    )
-  },
-})
-
-// sending multipart form data example
 const attachments = [
-  ['test', './fixtures/example.txt'],
+  ['profile', './tmp/profile.jpg'],
 ]
 const progress = (event) => console.log(event)
 const timeout = 5000
 
-multipart('http://some.url/submit', { attachments }, { progress, timeout })
+User.find({ name: 'highwire' })
+  .then((user) =>
+    multipart(
+      `/users/${user.id}/profile`,
+      { attachments },
+      { progress, timeout },
+    )
   .then((response) => JSON.parse(response.body))
   .then((data) => console.log(data))
   .catch((err) => console.log(err))
-
 ```
